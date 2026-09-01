@@ -1,0 +1,75 @@
+@model WebApplication1.ViewModels.PhoneReviewsViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+<h1>Details</h1>
+<div>
+    <h4>Phone</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model._phone.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model._phone.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model._phone.Price)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model._phone.Price)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?._phone.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<h4>Reviews</h4>
+@if (Model._review == null || !Model._review.Any())
+{
+    <p>No reviews yet.</p>
+}
+else
+{
+    <ul>
+        @foreach (var review in Model._review)
+        {
+            <li>
+                <strong>@review.AuthorName</strong> (@review.Rating/5) — @review.Content
+                <a asp-controller="Review" asp-action="Edit" asp-route-id="@review.Id">Edit</a> |
+                <a asp-controller="Review" asp-action="Delete" asp-route-id="@review.Id">Delete</a>
+            </li>
+
+        }
+    </ul>
+}
+
+@using (Html.BeginForm("Create", "Review", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.NewReview.PhoneId)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.NewReview.AuthorName)
+        @Html.EditorFor(model => model.NewReview.AuthorName)
+        @Html.ValidationMessageFor(model => model.NewReview.AuthorName)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.NewReview.Content)
+        @Html.EditorFor(model => model.NewReview.Content)
+        @Html.ValidationMessageFor(model => model.NewReview.Content)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.NewReview.Rating)
+        @Html.EditorFor(model => model.NewReview.Rating)
+        @Html.ValidationMessageFor(model => model.NewReview.Rating)
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Add Review" class="btn btn-primary" />
+    </div>
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
